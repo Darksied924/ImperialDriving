@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title %> · Imperial Driving School</title>
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1><%= title %></h1>
+    <div class="topbar-right">
+      <span>Signed in as <strong><%= user.name %></strong> (<%= user.role %>)</span>
+      <form method="POST" action="/auth/logout">
+        <button type="submit" class="btn btn-secondary">Sign out</button>
+      </form>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="actions">
+      <a class="btn" href="/admin/users/new">+ New staff user</a>
+    </div>
+
+    <% if (users.length === 0) { %>
+      <p class="empty">No staff users yet.</p>
+    <% } else { %>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% users.forEach(function (u) { %>
+            <tr>
+              <td><%= u.first_name %></td>
+              <td><%= u.last_name %></td>
+              <td><%= u.email %></td>
+              <td><%= u.role %></td>
+              <td><span class="status status-<%= u.status %>"><%= u.status %></span></td>
+              <td><%= new Date(u.created_at).toLocaleDateString() %></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    <% } %>
+  </main>
+</body>
+</html>

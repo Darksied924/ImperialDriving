@@ -1,3 +1,4 @@
+BEGIN;
 
 CREATE TABLE roles (
   id          SMALLSERIAL PRIMARY KEY,
@@ -9,7 +10,6 @@ CREATE TABLE roles (
 INSERT INTO roles (name, description) VALUES
   ('admin',      'System administrator'),
   ('reception',  'Front desk / reception staff'),
-  ('instructor', 'Driving instructor'),
   ('student',    'Driving school student');
 
 CREATE TABLE users (
@@ -36,3 +36,4 @@ CREATE INDEX users_role_idx ON users (role_id);
 
 SELECT attach_updated_at('users');
 
+COMMIT;

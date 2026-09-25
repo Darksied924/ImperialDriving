@@ -1,20 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>DriveCampus</title>
-
-    <link rel="stylesheet" href="/css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %> · Imperial Driving School</title>
+  <link rel="stylesheet" href="/css/auth.css" />
 </head>
+<body class="auth-body">
+  <main class="auth-card" role="main">
+    <header class="auth-header">
+      <h1>Imperial Driving School</h1>
+      <p class="auth-subtitle">Sign in to continue</p>
+    </header>
 
-<body>
+    <% if (error) { %>
+      <div class="auth-error" role="alert"><%= error %></div>
+    <% } %>
 
-    <main>
-        <h1>DriveCampus</h1>
-        <p>Driving School Management System</p>
-    </main>
+    <form method="POST" action="/auth/login" class="auth-form" autocomplete="on">
+      <label class="auth-field">
+        <span>Email</span>
+        <input
+          type="email"
+          name="email"
+          value="<%= email %>"
+          required
+          autofocus
+          autocomplete="username"
+        />
+      </label>
 
+      <label class="auth-field">
+        <span>Password</span>
+        <input
+          type="password"
+          name="password"
+          required
+          autocomplete="current-password"
+        />
+      </label>
+
+      <button type="submit" class="auth-submit">Sign in</button>
+    </form>
+  </main>
 </body>
 </html>

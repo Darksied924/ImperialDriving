@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title %> · Imperial Driving School</title>
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1><%= title %></h1>
+    <div class="topbar-right">
+      <a class="btn btn-secondary" href="/admin/users">Back to list</a>
+      <form method="POST" action="/auth/logout">
+        <button type="submit" class="btn btn-secondary">Sign out</button>
+      </form>
+    </div>
+  </header>
+
+  <main class="container narrow">
+    <% if (errors && errors.length > 0) { %>
+      <div class="error-banner">
+        <ul>
+          <% errors.forEach(function (e) { %>
+            <li><%= e %></li>
+          <% }); %>
+        </ul>
+      </div>
+    <% } %>
+
+    <form method="POST" action="/admin/users" class="form">
+      <label>
+        First name
+        <input type="text" name="first_name" value="<%= values.first_name %>" required maxlength="100">
+      </label>
+
+      <label>
+        Last name
+        <input type="text" name="last_name" value="<%= values.last_name %>" required maxlength="100">
+      </label>
+
+      <label>
+        Email
+        <input type="email" name="email" value="<%= values.email %>" required>
+      </label>
+
+      <label>
+        Password
+        <input type="password" name="password" required minlength="8" autocomplete="new-password">
+      </label>
+
+      <label>
+        Role
+        <select name="role" required>
+          <option value="reception"  <%= values.role === 'reception'  ? 'selected' : '' %>>Reception</option>
+          <option value="instructor" <%= values.role === 'instructor' ? 'selected' : '' %>>Instructor</option>
+          <option value="admin"      <%= values.role === 'admin'      ? 'selected' : '' %>>Admin</option>
+        </select>
+      </label>
+
+      <label>
+        Status
+        <select name="status" required>
+          <option value="active"    <%= values.status === 'active'    ? 'selected' : '' %>>Active</option>
+          <option value="inactive"  <%= values.status === 'inactive'  ? 'selected' : '' %>>Inactive</option>
+          <option value="suspended" <%= values.status === 'suspended' ? 'selected' : '' %>>Suspended</option>
+        </select>
+      </label>
+
+      <button type="submit" class="btn">Create user</button>
+    </form>
+  </main>
+</body>
+</html>

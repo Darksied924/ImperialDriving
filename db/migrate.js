@@ -35,15 +35,8 @@ async function appliedSet(client, table) {
 }
 
 async function applyFolder(client, dir, registryTable) {
-  if (!fs.existsSync(dir)) {
-    console.log(`  (folder ${dir} does not exist, skipping)`);
-    return;
-  }
+  if (!fs.existsSync(dir)) return;
   const files = fs.readdirSync(dir).filter(f => f.endsWith('.sql')).sort();
-  if (files.length === 0) {
-    console.log(`  (no .sql files in ${dir})`);
-    return;
-  }
   const applied = await appliedSet(client, registryTable);
 
   for (const file of files) {
