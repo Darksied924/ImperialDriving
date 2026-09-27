@@ -22,6 +22,26 @@ body {
 }
 
 /* Top bar */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 24px;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.topbar h1 { margin: 0; font-size: 1.2rem; }
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+/* Layout */
 .container {
   max-width: 960px;
   margin: 32px auto;
@@ -210,16 +230,3 @@ body {
   cursor: pointer;
 }
 .topbar-signout:hover { background: #1e293b; border-color: #475569; }
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 1rem;
-}
-
-textarea {
-  padding: .5rem .6rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 4px;
-  font: inherit;
-  resize: vertical;
-}

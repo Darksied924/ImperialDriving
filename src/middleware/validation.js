@@ -59,7 +59,7 @@ function validateNewUser(body) {
 const STUDENT_STATUSES = ['active', 'completed', 'withdrawn','suspended'];
 const GENDERS          = ['male', 'female', 'other'];
 
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const UUID_RE  = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function validateNewStudent(body) {
@@ -109,4 +109,91 @@ function validateNewStudent(body) {
   return errors;
 }
 
-module.exports = { validateNewUser, validateNewStudent };
+// ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// Course admin (create + edit)
+// ─────────────────────────────────────────────────────────────────────────────
+//
+// Contract matches the other validators: returns an array of error strings.
+// The route layer re-derives sanitized values from req.body on error.
+
+const COURSE_CODE_RE = /^[A-Za-z0-9-]{1,10}$/;
+const CURRENCY_RE    = /^[A-Z]{3}$/;
+
+// Blank → null (field absent / not set).
+// Non-numeric → { error: 'not a number' }.
+// Negative    → { error: 'negative' }.
+function parseNonNegNumber(raw) {
+  const s = raw == null ? '' : String(raw).trim();
+  if (s === '') return { value: null, error: null };
+  const n = Number(s);
+  if (!Number.isFinite(n)) return { value: null, error: 'not a number' };
+  if (n < 0) return { value: null, error: 'negative' };
+  return { value: n, error: null };
+}
+
+function parseNonNegInt(raw) {
+  const s = raw == null ? '' : String(raw).trim();
+  if (s === '') return { value: null, error: null };
+  if (!/^\d+$/.test(s)) return { value: null, error: 'not an integer' };
+  return { value: Number(s), error: null };
+}
+
+function validateNewCourse(body) {
+  const errors = [];
+  const b = body || {};
+
+  const code        = (b.code || '').trim();
+  const name        = (b.name || '').trim();
+  const description = (b.description || '').trim();
+  const currency    = (b.currency || '').trim().toUpperCase();
+
+  if (!code) {
+    errors.push('Course code is required.');
+  } else if (!COURSE_CODE_RE.test(code)) {
+    errors.push('Course code must be 1–10 characters: letters, digits, or hyphen.');
+  }
+
+  if (!name) {
+    errors.push('Course name is required.');
+  } else if (name.length > 100) {
+    errors.push('Course name must be 100 characters or fewer.');
+  }
+
+  if (description && description.length > 500) {
+    errors.push('Description must be 500 characters or fewer.');
+  }
+
+  const fee = parseNonNegNumber(b.total_fee);
+  if (fee.error === 'not a number') {
+    errors.push('Total fee must be a number.');
+  } else if (fee.error === 'negative') {
+    errors.push('Total fee cannot be negative.');
+  }
+
+  const dur = parseNonNegInt(b.duration_weeks);
+  if (dur.error) errors.push('Duration (weeks) must be a non-negative whole number.');
+
+  const th = parseNonNegInt(b.theory_hours);
+  if (th.error) errors.push('Theory hours must be a non-negative whole number.');
+
+  const ph = parseNonNegInt(b.practical_hours);
+  if (ph.error) errors.push('Practical hours must be a non-negative whole number.');
+
+  if (currency && !CURRENCY_RE.test(currency)) {
+    errors.push('Currency must be a 3-letter code (e.g. KES, USD).');
+  }
+
+  return errors;
+}
+
+function validateCourseUpdate(body) {
+  return validateNewCourse(body);
+}
+
+module.exports = {
+  validateNewUser,
+  validateNewStudent,
+  validateNewCourse,
+  validateCourseUpdate,
+};

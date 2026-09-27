@@ -1,0 +1,89 @@
+<%- include('../partials/topbar') %>
+
+<main class="page">
+  <header class="page-header">
+    <h1><%= mode === 'create' ? 'New Course' : 'Edit Course' %></h1>
+    <a class="btn" href="<%= basePath %>">← Back to courses</a>
+  </header>
+
+  <% if (errors && errors.length) { %>
+    <div class="error-banner">
+      <ul>
+        <% errors.forEach(e => { %><li><%= e %></li><% }) %>
+      </ul>
+    </div>
+  <% } %>
+
+  <form method="post"
+        action="<%= mode === 'create' ? basePath : basePath + '/' + course.id %>"
+        class="form-card">
+
+    <div class="form-row">
+      <label for="code">Code</label>
+      <input id="code" name="code" type="text" maxlength="10" required
+             value="<%= course.code || '' %>"
+             autocomplete="off" autocapitalize="characters">
+      <small>Short identifier, e.g. <code>B</code>, <code>A-HEAVY</code>.</small>
+    </div>
+
+    <div class="form-row">
+      <label for="name">Name</label>
+      <input id="name" name="name" type="text" maxlength="100" required
+             value="<%= course.name || '' %>">
+    </div>
+
+    <div class="form-row">
+      <label for="description">Description</label>
+      <textarea id="description" name="description" rows="3" maxlength="500"><%= course.description || '' %></textarea>
+      <small>Optional. 500 characters max.</small>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-row">
+        <label for="duration_weeks">Duration (weeks)</label>
+        <input id="duration_weeks" name="duration_weeks" type="number"
+               min="0" step="1"
+               value="<%= course.duration_weeks == null ? '' : course.duration_weeks %>">
+      </div>
+
+      <div class="form-row">
+        <label for="theory_hours">Theory hours</label>
+        <input id="theory_hours" name="theory_hours" type="number"
+               min="0" step="1"
+               value="<%= course.theory_hours == null ? '' : course.theory_hours %>">
+      </div>
+
+      <div class="form-row">
+        <label for="practical_hours">Practical hours</label>
+        <input id="practical_hours" name="practical_hours" type="number"
+               min="0" step="1"
+               value="<%= course.practical_hours == null ? '' : course.practical_hours %>">
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-row">
+        <label for="total_fee">Total fee</label>
+        <input id="total_fee" name="total_fee" type="number"
+               min="0" step="0.01"
+               value="<%= course.total_fee == null ? '' : course.total_fee %>">
+        <small>Leave blank for 0.</small>
+      </div>
+
+      <div class="form-row">
+        <label for="currency">Currency</label>
+        <input id="currency" name="currency" type="text" maxlength="3"
+               value="<%= course.currency || 'KES' %>"
+               autocapitalize="characters">
+        <small>3-letter code, e.g. KES.</small>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">
+        <%= mode === 'create' ? 'Create Course' : 'Save Changes' %>
+      </button>
+      <a class="btn" href="<%= basePath %>">Cancel</a>
+    </div>
+  </form>
+</main>

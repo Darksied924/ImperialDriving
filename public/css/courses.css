@@ -1,0 +1,47 @@
+.page { max-width: 960px; margin: 2rem auto; padding: 0 1rem; }
+
+.page-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+.page-header h1 { margin: 0; font-size: 1.5rem; }
+
+.filter-row { margin-bottom: 1rem; }
+.checkbox { display: inline-flex; align-items: center; gap: .4rem; font-size: .9rem; }
+
+.data-table {
+  width: 100%; border-collapse: collapse; background: #fff;
+  border: 1px solid #e5e7eb; border-radius: 6px; overflow: hidden;
+}
+.data-table th, .data-table td {
+  text-align: left; padding: .6rem .75rem; border-bottom: 1px solid #f1f5f9;
+  font-size: .9rem;
+}
+.data-table thead th { background: #f8fafc; font-weight: 600; }
+.data-table tr:last-child td { border-bottom: none; }
+.row-inactive { opacity: .55; }
+
+.pill { padding: .15rem .5rem; border-radius: 999px; font-size: .75rem; font-weight: 600; }
+.pill-active   { background: #dcfce7; color: #166534; }
+.pill-inactive { background: #f1f5f9; color: #475569; }
+
+.actions-col { width: 1%; white-space: nowrap; }
+.actions { display: flex; gap: .75rem; align-items: center; }
+.inline-form { display: inline; margin: 0; }
+.link-button {
+  background: none; border: none; padding: 0; color: #b91c1c;
+  cursor: pointer; font: inherit; text-decoration: underline;
+}
+
+.form-card {
+  background: #fff; border: 1px solid #e5e7eb; border-radius: 6px;
+  padding: 1.25rem; max-width: 520px;
+}
+.form-row { display: flex; flex-direction: column; gap: .25rem; margin-bottom: 1rem; }
+.form-row label { font-weight: 600; font-size: .9rem; }
+.form-row input {
+  padding: .5rem .6rem; border: 1px solid #cbd5e1; border-radius: 4px;
+  font: inherit;
+}
+.form-row small { color: #64748b; font-size: .8rem; }
+.form-actions { display: flex; gap: .5rem; margin-top: .5rem; }

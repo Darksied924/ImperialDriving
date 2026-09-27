@@ -1,0 +1,71 @@
+<%- include('../partials/topbar') %>
+
+<main class="page">
+  <header class="page-header">
+    <h1>Courses</h1>
+    <a class="btn btn-primary" href="<%= basePath %>/new">+ New Course</a>
+  </header>
+
+  <% if (errors && errors.length) { %>
+    <div class="error-banner">
+      <ul>
+        <% errors.forEach(e => { %><li><%= e %></li><% }) %>
+      </ul>
+    </div>
+  <% } %>
+
+  <form method="get" class="filter-row">
+    <label class="checkbox">
+      <input type="checkbox" name="inactive" value="1"
+             <%= showInactive ? 'checked' : '' %>
+             onchange="this.form.submit()">
+      Show inactive
+    </label>
+  </form>
+
+  <% if (!courses.length) { %>
+    <p class="empty">
+      No courses yet. <a href="<%= basePath %>/new">Create the first one</a>.
+    </p>
+  <% } else { %>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>Name</th>
+          <th>Duration</th>
+          <th>Fee</th>
+          <th>Status</th>
+          <th class="actions-col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% courses.forEach(c => { %>
+          <tr class="<%= c.is_active ? '' : 'row-inactive' %>">
+            <td><strong><%= c.code %></strong></td>
+            <td><%= c.name %></td>
+            <td>
+              <%= c.duration_weeks == null ? '—' : c.duration_weeks + ' wk' %>
+            </td>
+            <td>
+              <%= c.currency %> <%= Number(c.total_fee || 0).toLocaleString() %>
+            </td>
+            <td>
+              <span class="pill pill-<%= c.is_active ? 'active' : 'inactive' %>">
+                <%= c.is_active ? 'Active' : 'Inactive' %>
+              </span>
+            </td>
+            <td class="actions">
+              <a href="<%= basePath %>/<%= c.id %>/edit">Edit</a>
+              <form method="post" action="<%= basePath %>/<%= c.id %>/toggle" class="inline-form">
+                <button type="submit" class="link-button">
+                  <%= c.is_active ? 'Deactivate' : 'Reactivate' %>
+                </button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</main>

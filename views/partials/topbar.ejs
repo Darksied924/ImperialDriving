@@ -1,0 +1,87 @@
+<%
+  /**
+   * Shared topbar partial.
+   *
+   * Expected locals:
+   *   user        — { id, name, role, email } | null
+   *   currentPath — string, set by server.js via res.locals.currentPath
+   *   basePath    — optional; ignored by this partial
+   *
+   * EJS has access to res.locals but NOT to `req`. Do not reference `req`
+   * here — use `currentPath` for active-link highlighting.
+   */
+  const u = user || null;
+  const role = u ? u.role : null;
+
+  const homeHref =
+    role === 'admin'      ? '/admin/dashboard'     :
+    role === 'reception'  ? '/reception/dashboard' :
+    role === 'instructor' ? '/'                    :
+    '/';
+
+  const here = (typeof currentPath === 'string' ? currentPath : '/')
+                 .replace(/\/+$/, '') || '/';
+  const isActive = (href) => here === href || here.startsWith(href + '/');
+%>
+<header class="topbar">
+  <div class="topbar-inner">
+
+    <a class="topbar-brand" href="<%= homeHref %>">
+      <span class="topbar-brand-mark">IDS</span>
+      <span class="topbar-brand-text">Imperial Driving School</span>
+    </a>
+
+    <% if (u) { %>
+      <nav class="topbar-nav" aria-label="Primary">
+        <% if (role === 'admin') { %>
+          <a href="/admin/dashboard"
+             class="topbar-link<%= isActive('/admin/dashboard') ? ' is-active' : '' %>">
+            Dashboard
+          </a>
+          <a href="/admin/users"
+             class="topbar-link<%= isActive('/admin/users') ? ' is-active' : '' %>">
+            Users
+          </a>
+          <a href="/admin/students"
+             class="topbar-link<%= isActive('/admin/students') ? ' is-active' : '' %>">
+            Students
+          </a>
+          <a href="/admin/courses"
+             class="topbar-link<%= isActive('/admin/courses') ? ' is-active' : '' %>">
+            Courses
+          </a>
+        <% } else if (role === 'reception') { %>
+          <a href="/reception/dashboard"
+             class="topbar-link<%= isActive('/reception/dashboard') ? ' is-active' : '' %>">
+            Dashboard
+          </a>
+          <a href="/reception/students"
+             class="topbar-link<%= isActive('/reception/students') ? ' is-active' : '' %>">
+            Students
+          </a>
+        <% } else if (role === 'instructor') { %>
+          <a href="/"
+             class="topbar-link<%= isActive('/') ? ' is-active' : '' %>">
+            Dashboard
+          </a>
+        <% } %>
+      </nav>
+
+      <div class="topbar-user">
+        <span class="topbar-user-name"><%= u.name %></span>
+        <span class="topbar-user-role"><%= role %></span>
+        <form method="POST" action="/auth/logout" class="topbar-logout">
+          <button type="submit" class="topbar-signout">Sign out</button>
+        </form>
+      </div>
+    <% } else { %>
+      <nav class="topbar-nav" aria-label="Primary">
+        <a href="/auth/login"
+           class="topbar-link<%= isActive('/auth/login') ? ' is-active' : '' %>">
+          Sign in
+        </a>
+      </nav>
+    <% } %>
+
+  </div>
+</header>
