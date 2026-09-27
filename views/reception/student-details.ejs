@@ -1,0 +1,51 @@
+<!-- views/reception/student-details.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title><%= title %> — Imperial Driving</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+  <link rel="stylesheet" href="/css/students.css" />
+</head>
+<body>
+  <%- include('../partials/topbar', { user: user, active: active }) %>
+
+  <main class="page">
+    <header class="page-header">
+      <h1><%= student.first_name %> <%= student.last_name %></h1>
+      <a href="<%= basePath %>/students" class="btn">Back to list</a>
+    </header>
+
+    <dl class="details">
+      <dt>Admission #</dt><dd><%= student.admission_number %></dd>
+      <dt>Email</dt><dd><%= student.email || '—' %></dd>
+      <dt>Phone</dt><dd><%= student.phone || '—' %></dd>
+      <dt>Date of birth</dt>
+      <dd>
+  <%= student.date_of_birth
+        ? (function(d){
+            const dt = new Date(d);
+            const y = dt.getFullYear();
+            const m = String(dt.getMonth() + 1).padStart(2, '0');
+            const day = String(dt.getDate()).padStart(2, '0');
+            return y + '-' + m + '-' + day;
+          })(student.date_of_birth)
+        : '—' %>
+</dd>
+      <dt>Gender</dt><dd><%= student.gender || '—' %></dd>
+      <dt>National ID</dt><dd><%= student.national_id || '—' %></dd>
+      <dt>Address</dt><dd><%= student.address || '—' %></dd>
+      <dt>Course</dt><dd><%= student.course_name || '—' %></dd>
+      <dt>Status</dt>
+      <dd><span class="pill pill-<%= student.status %>"><%= student.status %></span></dd>
+      <dt>Next of kin</dt>
+      <dd>
+        <%= student.next_of_kin_name || '—' %>
+        <%= student.next_of_kin_relationship ? '(' + student.next_of_kin_relationship + ')' : '' %>
+        <%= student.next_of_kin_phone ? '· ' + student.next_of_kin_phone : '' %>
+      </dd>
+    </dl>
+  </main>
+</body>
+</html>

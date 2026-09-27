@@ -1,0 +1,67 @@
+<!-- views/reception/students.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title><%= title %> — Imperial Driving</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+  <link rel="stylesheet" href="/css/students.css" />
+</head>
+<body>
+  <%- include('../partials/topbar', { user: user, active: active }) %>
+
+  <main class="page">
+    <header class="page-header">
+      <h1>Students</h1>
+      <a href="<%= basePath %>/students/new" class="btn btn-primary">+ Register Student</a>
+    </header>
+
+    <form method="GET" action="<%= basePath %>/students" class="search">
+      <input type="search" name="q" value="<%= search || '' %>"
+             placeholder="Search by name or admission number" />
+      <button class="btn" type="submit">Search</button>
+    </form>
+
+    <% if (!students.length) { %>
+      <p class="empty">No students found.</p>
+    <% } else { %>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Admission #</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Course</th>
+            <th>Status</th>
+            <th>Enrolled</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% students.forEach(function (s) { %>
+            <tr>
+              <td><%= s.admission_number %></td>
+              <td><%= s.first_name %> <%= s.last_name %></td>
+              <td><%= s.phone || '—' %></td>
+              <td><%= s.course_name || '—' %></td>
+              <td><span class="pill pill-<%= s.status %>"><%= s.status %></span></td>
+              <td><%= s.enrollment_date
+                   ? (function(d){
+                   const dt = new Date(d);
+                   const y = dt.getFullYear();
+                   const m = String(dt.getMonth() + 1).padStart(2, '0');
+                    const day = String(dt.getDate()).padStart(2, '0');
+                  return y + '-' + m + '-' + day;
+                  })(s.enrollment_date)
+                   : '—' %>
+              </td>
+              <td><a href="<%= basePath %>/students/<%= s.id %>">View</a></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    <% } %>
+  </main>
+</body>
+</html>

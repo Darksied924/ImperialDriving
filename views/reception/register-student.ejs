@@ -1,0 +1,127 @@
+<!-- views/reception/register-student.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title><%= title %> — Imperial Driving</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+  <link rel="stylesheet" href="/css/students.css" />
+</head>
+<body>
+  <%- include('../partials/topbar', { user: user, active: active }) %>
+
+  <main class="page">
+    <h1>Register Student</h1>
+
+    <% if (errors && errors.length) { %>
+      <div class="error-banner" role="alert">
+        <ul>
+          <% errors.forEach(function (e) { %>
+            <li><%= e %></li>
+          <% }); %>
+        </ul>
+      </div>
+    <% } %>
+
+    <form method="POST" action="<%= basePath %>/students" class="form" novalidate>
+      <fieldset>
+        <legend>Personal</legend>
+
+        <label>First name *
+          <input type="text" name="first_name" required
+                 value="<%= values.first_name || '' %>" />
+        </label>
+
+        <label>Last name *
+          <input type="text" name="last_name" required
+                 value="<%= values.last_name || '' %>" />
+        </label>
+
+        <label>Email
+          <input type="email" name="email"
+                 value="<%= values.email || '' %>" />
+        </label>
+
+        <label>Phone
+          <input type="text" name="phone"
+                 value="<%= values.phone || '' %>" />
+        </label>
+
+        <label>Date of birth
+          <input type="date" name="date_of_birth"
+                 value="<%= values.date_of_birth || '' %>" />
+        </label>
+
+        <label>Gender
+          <select name="gender">
+            <option value="">—</option>
+            <% ['female','male','other'].forEach(function (g) { %>
+              <option value="<%= g %>"
+                <%= values.gender === g ? 'selected' : '' %>><%= g %></option>
+            <% }); %>
+          </select>
+        </label>
+
+        <label>National ID
+          <input type="text" name="national_id"
+                 value="<%= values.national_id || '' %>" />
+        </label>
+
+        <label>Address
+          <textarea name="address"><%= values.address || '' %></textarea>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Course &amp; status</legend>
+
+        <label>Course *
+          <select name="course_id" required>
+            <option value="">Select a course</option>
+            <% courses.forEach(function (c) { %>
+              <option value="<%= c.id %>"
+                <%= String(values.course_id) === String(c.id) ? 'selected' : '' %>>
+                <%= c.name %>
+              </option>
+            <% }); %>
+          </select>
+        </label>
+
+        <label>Status
+          <select name="status">
+            <% ['active','completed','withdrawn','suspended'].forEach(function (s) { %>
+              <option value="<%= s %>"
+                <%= (values.status || 'active') === s ? 'selected' : '' %>><%= s %></option>
+            <% }); %>
+          </select>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Next of kin</legend>
+
+        <label>Name
+          <input type="text" name="next_of_kin_name"
+                 value="<%= values.next_of_kin_name || '' %>" />
+        </label>
+
+        <label>Phone
+          <input type="text" name="next_of_kin_phone"
+                 value="<%= values.next_of_kin_phone || '' %>" />
+        </label>
+
+        <label>Relationship
+          <input type="text" name="next_of_kin_relationship"
+                 value="<%= values.next_of_kin_relationship || '' %>" />
+        </label>
+      </fieldset>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Register Student</button>
+        <a href="<%= basePath %>/students" class="btn">Cancel</a>
+      </div>
+    </form>
+  </main>
+</body>
+</html>

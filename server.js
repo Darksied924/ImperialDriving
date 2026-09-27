@@ -12,7 +12,8 @@ const passport = require('./src/config/passport');
 
 const authRoutes = require('./src/routes/auth.routes');
 const healthRoutes = require('./src/routes/health.routes');
-const adminRoutes = require('./src/routes/admin.routes'); // NEW
+const adminRoutes = require('./src/routes/admin.routes');
+const studentsRoutes = require('./src/routes/students.routes'); // NEW
 
 const { ensureAuthenticated, requireRole } = require('./src/middleware/auth');
 
@@ -58,7 +59,13 @@ app.use((req, res, next) => {
 // Routes
 app.use('/', healthRoutes);
 app.use('/auth', authRoutes);
-app.use('/admin', adminRoutes); // NEW
+app.use('/admin', adminRoutes);
+
+// Students — mounted under both staff areas. The same router serves
+// /reception/students/* and /admin/students/*. Role guards inside the
+// router allow reception + admin only.
+app.use('/reception', studentsRoutes); // NEW
+app.use('/admin', studentsRoutes);     // NEW
 
 // Placeholder dashboards — replace with real routers later.
 function placeholderDashboard(label) {
@@ -119,12 +126,15 @@ app.get(
   placeholderDashboard('Reception dashboard')
 );
 
+// NOTE: Students have no login. This route is dead code — kept only
+// because it was here before. Safe to delete whenever you like.
 app.get(
   '/students/dashboard',
   ensureAuthenticated,
   requireRole('student'),
   placeholderDashboard('Student dashboard')
 );
+
 // 404
 app.use((req, res) => {
   res.status(404).send('Not Found');
