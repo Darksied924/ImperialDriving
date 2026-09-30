@@ -110,6 +110,7 @@ function validateNewStudent(body) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 // Course admin (create + edit)
 // ─────────────────────────────────────────────────────────────────────────────
 //
@@ -190,111 +191,9 @@ function validateCourseUpdate(body) {
   return validateNewCourse(body);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Payments (create)
-// ─────────────────────────────────────────────────────────────────────────────
-//
-// Field names mirror the payments schema and the form posts snake_case.
-// Enum whitelists reflect the LIVE database enums — verified via:
-//   SELECT enumlabel FROM pg_enum e JOIN pg_type t ON t.oid=e.enumtypid
-//    WHERE t.typname='payment_type'   ORDER BY enumsortorder;
-//   SELECT enumlabel FROM pg_enum e JOIN pg_type t ON t.oid=e.enumtypid
-//    WHERE t.typname='payment_method' ORDER BY enumsortorder;
-// If the DB enums change, update these arrays in the same commit.
-
-const PAYMENT_TYPES   = ['registration', 'tuition', 'practical', 'exam', 'other'];
-const PAYMENT_METHODS = ['cash', 'mobile_money', 'bank_transfer', 'card', 'other'];
-
-// Methods that must carry a reference (M-Pesa code, bank ref, card auth no., etc.)
-const METHODS_REQUIRING_REFERENCE = ['mobile_money', 'bank_transfer'];
-
-// Amount: required, positive, max 2 decimal places, sane upper bound.
-const AMOUNT_RE      = /^\d+(\.\d{1,2})?$/;
-const AMOUNT_MAX     = 1_000_000_000;   // 1 billion — protective bound, not a business limit
-
-function validateNewPayment(body) {
-  const errors = [];
-  const b = body || {};
-
-  // Student
-  const studentId = (b.student_id || '').trim();
-  if (!studentId) {
-    errors.push('Student is required.');
-  } else if (!UUID_RE.test(studentId)) {
-    errors.push('Student selection is invalid.');
-  }
-
-  // Amount
-  const amountRaw = b.amount == null ? '' : String(b.amount).trim();
-  if (amountRaw === '') {
-    errors.push('Amount is required.');
-  } else if (!AMOUNT_RE.test(amountRaw)) {
-    errors.push('Amount must be a positive number with at most 2 decimal places.');
-  } else {
-    const n = Number(amountRaw);
-    if (!(n > 0)) {
-      errors.push('Amount must be greater than zero.');
-    } else if (n > AMOUNT_MAX) {
-      errors.push('Amount is unreasonably large.');
-    }
-  }
-
-  // Payment type
-  const paymentType = (b.payment_type || '').trim();
-  if (!paymentType) {
-    errors.push('Payment type is required.');
-  } else if (!PAYMENT_TYPES.includes(paymentType)) {
-    errors.push('Payment type is not valid.');
-  }
-
-  // Payment method
-  const paymentMethod = (b.payment_method || '').trim();
-  if (!paymentMethod) {
-    errors.push('Payment method is required.');
-  } else if (!PAYMENT_METHODS.includes(paymentMethod)) {
-    errors.push('Payment method is not valid.');
-  }
-
-  // Reference — conditionally required
-  const reference = (b.reference || '').trim();
-  if (reference.length > 100) {
-    errors.push('Reference must be 100 characters or fewer.');
-  }
-  if (
-    METHODS_REQUIRING_REFERENCE.includes(paymentMethod) &&
-    reference.length === 0
-  ) {
-    errors.push(
-      paymentMethod === 'mobile_money'
-        ? 'Reference (e.g. M-Pesa code) is required for mobile money payments.'
-        : 'Reference (e.g. bank slip no.) is required for bank transfer payments.'
-    );
-  }
-
-  // Notes
-  const notes = (b.notes || '').trim();
-  if (notes.length > 500) {
-    errors.push('Notes must be 500 characters or fewer.');
-  }
-
-  // Paid-at — optional; must parse; must not be in the future (60s skew tolerance)
-  const paidAtRaw = (b.paid_at || '').trim();
-  if (paidAtRaw) {
-    const ts = Date.parse(paidAtRaw);
-    if (Number.isNaN(ts)) {
-      errors.push('Paid-at date is not valid.');
-    } else if (ts > Date.now() + 60_000) {
-      errors.push('Paid-at date cannot be in the future.');
-    }
-  }
-
-  return errors;
-}
-
 module.exports = {
   validateNewUser,
   validateNewStudent,
   validateNewCourse,
   validateCourseUpdate,
-  validateNewPayment,
 };

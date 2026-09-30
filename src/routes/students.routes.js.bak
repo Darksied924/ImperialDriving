@@ -138,18 +138,10 @@ router.get(
     try {
       const student = await studentService.getStudentById(req.params.id);
       if (!student) return res.status(404).send('Student not found');
-
-      const [balance, payments] = await Promise.all([
-        paymentService.getStudentBalance(student.id),
-        paymentService.listPaymentsForStudent(student.id),
-      ]);
-
       res.render('reception/student-details', {
         title: `${student.first_name} ${student.last_name}`,
         user: req.user,
         student,
-        balance,
-        payments,
         active: 'students',
         basePath: req.baseUrl,
       });

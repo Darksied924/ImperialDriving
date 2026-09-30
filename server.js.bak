@@ -55,13 +55,16 @@ app.use(passport.session());
 // Expose the current user to every view.
 app.use((req, res, next) => {
   res.locals.user = req.user || null;
-  res.locals.currentPath = req.path; // NEW — used by topbar active-link highlight
+  res.locals.currentPath = req.path;
+  res.locals.currentUrl  = req.originalUrl;   // if any partial ever needs query string
+  res.locals.query       = req.query;         // if views need ?inactive=1 etc.
   next();
 });
 
 // Routes
 app.use('/', healthRoutes);
 app.use('/auth', authRoutes);
+app.use('/admin/courses', coursesRoutes); // NEW — must precede /admin
 app.use('/admin', adminRoutes);
 
 // Students — mounted under both staff areas. The same router serves
@@ -72,7 +75,6 @@ app.use('/admin', studentsRoutes);
 
 // Courses — admin-only. Mounted at an explicit subpath so it sits alongside
 // the admin routes without touching them.
-app.use('/admin/courses', coursesRoutes); // NEW
 
 // Placeholder dashboards — replace with real routers later.
 function placeholderDashboard(label) {

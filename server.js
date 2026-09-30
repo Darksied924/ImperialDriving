@@ -14,7 +14,8 @@ const authRoutes = require('./src/routes/auth.routes');
 const healthRoutes = require('./src/routes/health.routes');
 const adminRoutes = require('./src/routes/admin.routes');
 const studentsRoutes = require('./src/routes/students.routes');
-const coursesRoutes = require('./src/routes/courses.routes'); // NEW
+const coursesRoutes = require('./src/routes/courses.routes');   // NEW
+const paymentsRoutes = require('./src/routes/payments.routes'); // NEW
 
 const { ensureAuthenticated, requireRole } = require('./src/middleware/auth');
 
@@ -65,6 +66,8 @@ app.use((req, res, next) => {
 app.use('/', healthRoutes);
 app.use('/auth', authRoutes);
 app.use('/admin/courses', coursesRoutes); // NEW — must precede /admin
+app.use('/reception', paymentsRoutes);   // NEW — /reception/payments/*
+app.use('/admin', paymentsRoutes);       // NEW — /admin/payments/*, must precede adminRoutes
 app.use('/admin', adminRoutes);
 
 // Students — mounted under both staff areas. The same router serves

@@ -1,0 +1,98 @@
+<!-- views/reception/payment-details.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title><%= title %> — Imperial Driving</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+  <link rel="stylesheet" href="/css/students.css" />
+  <link rel="stylesheet" href="/css/payments.css" />
+</head>
+<body>
+  <%- include('../partials/topbar', { user: user, active: active }) %>
+
+  <main class="page">
+    <header class="page-header">
+      <h1>Receipt <code><%= payment.receipt_number %></code></h1>
+      <div class="page-actions">
+        <a href="<%= basePath %>/payments/<%= payment.id %>/receipt"
+           class="btn" target="_blank" rel="noopener">Print</a>
+        <a href="<%= basePath %>/students/<%= payment.student_id %>"
+           class="btn">Student</a>
+        <a href="<%= basePath %>/payments" class="btn">Back</a>
+      </div>
+    </header>
+
+    <section class="card">
+      <h2>Payment</h2>
+      <dl class="detail-list">
+        <dt>Amount</dt>
+        <dd><strong><%= payment.currency %> <%= Number(payment.amount)
+              .toLocaleString(undefined, { minimumFractionDigits: 2,
+                                            maximumFractionDigits: 2 }) %></strong></dd>
+        <dt>Type</dt>       <dd><%= payment.payment_type %></dd>
+        <dt>Method</dt>     <dd><%= payment.payment_method %></dd>
+        <% if (payment.reference) { %><dt>Reference</dt><dd><%= payment.reference %></dd><% } %>
+        <% if (payment.notes)     { %><dt>Notes</dt>    <dd><%= payment.notes %></dd><% } %>
+        <dt>Paid at</dt>    <dd><%= (function(d){
+                                 const dt = new Date(d);
+                                 return dt.toLocaleString();
+                               })(payment.paid_at) %></dd>
+        <dt>Recorded by</dt>
+        <dd><%= payment.recorder_first_name
+                ? (payment.recorder_first_name + ' ' + (payment.recorder_last_name || ''))
+                : '—' %></dd>
+      </dl>
+    </section>
+
+    <section class="card">
+      <h2>Student</h2>
+      <dl class="detail-list">
+        <dt>Name</dt>
+        <dd><%= payment.first_name %> <%= payment.last_name %></dd>
+        <dt>Admission #</dt>
+        <dd><%= payment.admission_number %></dd>
+        <dt>Course</dt>
+        <dd><%= payment.course_code ? (payment.course_code + ' — ' + payment.course_name) : '—' %></dd>
+        <% if (payment.phone) { %><dt>Phone</dt><dd><%= payment.phone %></dd><% } %>
+      </dl>
+    </section>
+
+    <% if (balance) { %>
+      <section class="card balance-card">
+        <h2>Course balance</h2>
+        <dl class="detail-list">
+          <dt>Total fee</dt>
+          <dd><%= balance.total_fee %></dd>
+          <dt>Total paid</dt>
+          <dd><%= balance.total_paid %></dd>
+          <dt>Balance</dt>
+          <dd>
+            <% if (Number(balance.balance) < 0) { %>
+              <span class="pill pill-credit">Credit: <%= balance.balance %></span>
+            <% } else if (Number(balance.balance) === 0) { %>
+              <span class="pill pill-paid">Paid in full</span>
+            <% } else { %>
+              <span class="pill pill-due"><%= balance.balance %></span>
+            <% } %>
+          </dd>
+        </dl>
+      </section>
+    <% } %>
+
+    <section class="card danger-zone">
+      <h2>Void this payment</h2>
+      <p class="muted">
+        Voiding removes the amount from the student's balance. The receipt
+        number is kept and will never be reused. This action is audited.
+      </p>
+      <form method="POST"
+            action="<%= basePath %>/payments/<%= payment.id %>/void"
+            onsubmit="return confirm('Void payment <%= payment.receipt_number %>? This cannot be undone.');">
+        <button type="submit" class="btn btn-danger">Void Payment</button>
+      </form>
+    </section>
+  </main>
+</body>
+</html>

@@ -46,10 +46,6 @@
              class="topbar-link<%= isActive('/admin/students') ? ' is-active' : '' %>">
             Students
           </a>
-          <a href="/admin/payments"
-             class="topbar-link<%= isActive('/admin/payments') ? ' is-active' : '' %>">
-            Payments
-          </a>
           <a href="/admin/courses"
              class="topbar-link<%= isActive('/admin/courses') ? ' is-active' : '' %>">
             Courses
@@ -62,10 +58,6 @@
           <a href="/reception/students"
              class="topbar-link<%= isActive('/reception/students') ? ' is-active' : '' %>">
             Students
-          </a>
-          <a href="/reception/payments"
-             class="topbar-link<%= isActive('/reception/payments') ? ' is-active' : '' %>">
-            Payments
           </a>
         <% } else if (role === 'instructor') { %>
           <a href="/"

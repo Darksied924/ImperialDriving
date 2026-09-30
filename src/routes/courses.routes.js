@@ -260,4 +260,4 @@ router.post('/:id/toggle', async (req, res, next) => {
   }
 });
 
-module.exports = router;Z
+module.exports = router;

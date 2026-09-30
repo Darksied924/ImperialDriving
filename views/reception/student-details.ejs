@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="/css/style.css" />
   <link rel="stylesheet" href="/css/admin.css" />
   <link rel="stylesheet" href="/css/students.css" />
+  <link rel="stylesheet" href="/css/payments.css" />
 </head>
 <body>
   <%- include('../partials/topbar', { user: user, active: active }) %>
@@ -14,38 +15,112 @@
   <main class="page">
     <header class="page-header">
       <h1><%= student.first_name %> <%= student.last_name %></h1>
-      <a href="<%= basePath %>/students" class="btn">Back to list</a>
+      <div class="page-actions">
+        <a href="<%= basePath %>/payments/new?student_id=<%= student.id %>"
+           class="btn btn-primary">+ Record Payment</a>
+        <a href="<%= basePath %>/students" class="btn">Back to list</a>
+      </div>
     </header>
 
-    <dl class="details">
-      <dt>Admission #</dt><dd><%= student.admission_number %></dd>
-      <dt>Email</dt><dd><%= student.email || '—' %></dd>
-      <dt>Phone</dt><dd><%= student.phone || '—' %></dd>
-      <dt>Date of birth</dt>
-      <dd>
-  <%= student.date_of_birth
-        ? (function(d){
-            const dt = new Date(d);
-            const y = dt.getFullYear();
-            const m = String(dt.getMonth() + 1).padStart(2, '0');
-            const day = String(dt.getDate()).padStart(2, '0');
-            return y + '-' + m + '-' + day;
-          })(student.date_of_birth)
-        : '—' %>
-</dd>
-      <dt>Gender</dt><dd><%= student.gender || '—' %></dd>
-      <dt>National ID</dt><dd><%= student.national_id || '—' %></dd>
-      <dt>Address</dt><dd><%= student.address || '—' %></dd>
-      <dt>Course</dt><dd><%= student.course_name || '—' %></dd>
-      <dt>Status</dt>
-      <dd><span class="pill pill-<%= student.status %>"><%= student.status %></span></dd>
-      <dt>Next of kin</dt>
-      <dd>
-        <%= student.next_of_kin_name || '—' %>
-        <%= student.next_of_kin_relationship ? '(' + student.next_of_kin_relationship + ')' : '' %>
-        <%= student.next_of_kin_phone ? '· ' + student.next_of_kin_phone : '' %>
-      </dd>
-    </dl>
+    <% if (balance) { %>
+      <section class="card balance-card">
+        <h2>Course balance</h2>
+        <dl class="detail-list">
+          <dt>Total fee</dt>
+          <dd><%= balance.total_fee %></dd>
+          <dt>Total paid</dt>
+          <dd><%= balance.total_paid %></dd>
+          <dt>Balance</dt>
+          <dd>
+            <% if (Number(balance.balance) < 0) { %>
+              <span class="pill pill-credit">Credit: <%= balance.balance %></span>
+            <% } else if (Number(balance.balance) === 0) { %>
+              <span class="pill pill-paid">Paid in full</span>
+            <% } else { %>
+              <span class="pill pill-due"><%= balance.balance %></span>
+            <% } %>
+          </dd>
+        </dl>
+      </section>
+    <% } %>
+
+    <section class="card">
+      <h2>Student details</h2>
+      <dl class="details">
+        <dt>Admission #</dt><dd><%= student.admission_number %></dd>
+        <dt>Email</dt><dd><%= student.email || '—' %></dd>
+        <dt>Phone</dt><dd><%= student.phone || '—' %></dd>
+        <dt>Date of birth</dt>
+        <dd>
+          <%= student.date_of_birth
+                ? (function(d){
+                    const dt = new Date(d);
+                    const y = dt.getFullYear();
+                    const m = String(dt.getMonth() + 1).padStart(2, '0');
+                    const day = String(dt.getDate()).padStart(2, '0');
+                    return y + '-' + m + '-' + day;
+                  })(student.date_of_birth)
+                : '—' %>
+        </dd>
+        <dt>Gender</dt><dd><%= student.gender || '—' %></dd>
+        <dt>National ID</dt><dd><%= student.national_id || '—' %></dd>
+        <dt>Address</dt><dd><%= student.address || '—' %></dd>
+        <dt>Course</dt><dd><%= student.course_name || '—' %></dd>
+        <dt>Status</dt>
+        <dd><span class="pill pill-<%= student.status %>"><%= student.status %></span></dd>
+        <dt>Next of kin</dt>
+        <dd>
+          <%= student.next_of_kin_name || '—' %>
+          <%= student.next_of_kin_relationship ? '(' + student.next_of_kin_relationship + ')' : '' %>
+          <%= student.next_of_kin_phone ? '· ' + student.next_of_kin_phone : '' %>
+        </dd>
+      </dl>
+    </section>
+
+    <section class="card">
+      <header class="card-header">
+        <h2>Recent payments</h2>
+        <% if (payments && payments.length > 0) { %>
+          <a href="<%= basePath %>/payments" class="btn">View all</a>
+        <% } %>
+      </header>
+
+      <% if (!payments || !payments.length) { %>
+        <p class="empty">No payments recorded yet.</p>
+      <% } else { %>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Receipt #</th>
+              <th class="num">Amount</th>
+              <th>Method</th>
+              <th>Date</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% payments.slice(0, 5).forEach(function (p) { %>
+              <tr>
+                <td><code><%= p.receipt_number %></code></td>
+                <td class="num">
+                  <%= p.currency %> <%= Number(p.amount).toLocaleString(undefined,
+                       { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %>
+                </td>
+                <td><span class="pill pill-method"><%= p.payment_method %></span></td>
+                <td><%= (function(d){
+                       const dt = new Date(d);
+                       const y = dt.getFullYear();
+                       const m = String(dt.getMonth() + 1).padStart(2, '0');
+                       const day = String(dt.getDate()).padStart(2, '0');
+                       return y + '-' + m + '-' + day;
+                     })(p.paid_at) %></td>
+                <td><a href="<%= basePath %>/payments/<%= p.id %>">View</a></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } %>
+    </section>
   </main>
 </body>
 </html>

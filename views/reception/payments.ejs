@@ -1,0 +1,67 @@
+<!-- views/reception/payments.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title><%= title %> — Imperial Driving</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+  <link rel="stylesheet" href="/css/students.css" />
+  <link rel="stylesheet" href="/css/payments.css" />
+</head>
+<body>
+  <%- include('../partials/topbar', { user: user, active: active }) %>
+
+  <main class="page">
+    <header class="page-header">
+      <h1>Payments</h1>
+      <a href="<%= basePath %>/payments/new" class="btn btn-primary">+ Record Payment</a>
+    </header>
+
+    <% if (!payments.length) { %>
+      <p class="empty">No payments recorded yet.</p>
+    <% } else { %>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Receipt #</th>
+            <th>Student</th>
+            <th>Course</th>
+            <th class="num">Amount</th>
+            <th>Method</th>
+            <th>Date</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% payments.forEach(function (p) { %>
+            <tr>
+              <td><code><%= p.receipt_number %></code></td>
+              <td>
+                <%= p.student_name %><br />
+                <small class="muted"><%= p.admission_number %></small>
+              </td>
+              <td><%= p.course_code || '—' %></td>
+              <td class="num">
+                <%= p.currency %> <%= Number(p.amount).toLocaleString(undefined,
+                     { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %>
+              </td>
+              <td><span class="pill pill-method"><%= p.payment_method %></span></td>
+              <td><%= (function(d){
+                     const dt = new Date(d);
+                     const y = dt.getFullYear();
+                     const m = String(dt.getMonth() + 1).padStart(2, '0');
+                     const day = String(dt.getDate()).padStart(2, '0');
+                     const hh = String(dt.getHours()).padStart(2, '0');
+                     const mm = String(dt.getMinutes()).padStart(2, '0');
+                     return y + '-' + m + '-' + day + ' ' + hh + ':' + mm;
+                   })(p.paid_at) %></td>
+              <td><a href="<%= basePath %>/payments/<%= p.id %>">View</a></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    <% } %>
+  </main>
+</body>
+</html>

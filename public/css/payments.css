@@ -1,0 +1,88 @@
+/* public/css/payments.css — Phase 6 */
+
+/* Numeric column alignment for amount columns */
+.data-table th.num,
+.data-table td.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Inline <code> inside tables (receipt numbers) */
+.data-table code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9em;
+  background: #f4f4f4;
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+}
+
+/* Muted helper text */
+.muted { color: #777; }
+
+/* Page action cluster in the header */
+.page-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+/* Method pill — neutral, different from status pills */
+.pill-method {
+  background: #eef2f7;
+  color: #334155;
+  border: 1px solid #d8e0ea;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.85em;
+  text-transform: capitalize;
+}
+
+/* Balance pills */
+.pill-paid   { background: #dff5e1; color: #1a6b2c; padding: 0.15rem 0.55rem;
+               border-radius: 999px; font-weight: 600; }
+.pill-due    { background: #fde2e2; color: #8a1f1f; padding: 0.15rem 0.55rem;
+               border-radius: 999px; font-weight: 600; }
+.pill-credit { background: #e0ecff; color: #1d4e8a; padding: 0.15rem 0.55rem;
+               border-radius: 999px; font-weight: 600; }
+
+/* Detail card */
+.card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  margin: 1rem 0;
+}
+.card h2 { margin: 0 0 .75rem; font-size: 1.05rem; }
+
+.detail-list {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: 1.25rem;
+  row-gap: 0.4rem;
+  margin: 0;
+}
+.detail-list dt { color: #666; }
+.detail-list dd { margin: 0; }
+
+/* Danger zone */
+.danger-zone { border-color: #f1c1c1; background: #fffafa; }
+.btn-danger {
+  background: #b3261e;
+  color: #fff;
+  border: 1px solid #b3261e;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font: inherit;
+}
+.btn-danger:hover { background: #931e17; }
+
+/* Form actions row */
+.form-actions { display: flex; gap: 0.5rem; margin-top: 1rem; }
+
+/* Card header — title + action on one line */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+.card-header h2 { margin: 0; }

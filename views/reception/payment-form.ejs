@@ -1,0 +1,96 @@
+<!-- views/reception/payment-form.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title><%= title %> — Imperial Driving</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+  <link rel="stylesheet" href="/css/students.css" />
+  <link rel="stylesheet" href="/css/payments.css" />
+</head>
+<body>
+  <%- include('../partials/topbar', { user: user, active: active }) %>
+
+  <main class="page">
+    <h1>Record Payment</h1>
+
+    <% if (errors && errors.length) { %>
+      <div class="error-banner" role="alert">
+        <ul>
+          <% errors.forEach(function (e) { %>
+            <li><%= e %></li>
+          <% }); %>
+        </ul>
+      </div>
+    <% } %>
+
+    <form method="POST" action="<%= basePath %>/payments" class="form" novalidate>
+
+      <label>Student *
+        <select name="student_id" required>
+          <option value="">— select a student —</option>
+          <% students.forEach(function (s) { %>
+            <option value="<%= s.id %>"
+              <%= values.student_id === s.id ? 'selected' : '' %>>
+              <%= s.admission_number %> — <%= s.first_name %> <%= s.last_name %>
+              <% if (s.course_code) { %> (<%= s.course_code %>)<% } %>
+            </option>
+          <% }); %>
+        </select>
+      </label>
+
+      <label>Amount (KSh) *
+        <input type="number" name="amount" step="0.01" min="0.01"
+               value="<%= values.amount || '' %>" required />
+        <small class="muted">
+          Partial payments are allowed. First payment must meet the course's
+          minimum deposit — the system will tell you if it doesn't.
+        </small>
+      </label>
+
+      <label>Payment type *
+        <select name="payment_type" required>
+          <% ['tuition','registration','practical','exam','other'].forEach(function (t) { %>
+            <option value="<%= t %>"
+              <%= values.payment_type === t ? 'selected' : '' %>><%= t %></option>
+          <% }); %>
+        </select>
+      </label>
+
+      <label>Payment method *
+        <select name="payment_method" required>
+          <% ['cash','mobile_money','bank_transfer','card','other'].forEach(function (m) { %>
+            <option value="<%= m %>"
+              <%= values.payment_method === m ? 'selected' : '' %>><%= m %></option>
+          <% }); %>
+        </select>
+      </label>
+
+      <label>Reference
+        <input type="text" name="reference" maxlength="100"
+               value="<%= values.reference || '' %>"
+               placeholder="M-Pesa code, bank slip no., etc." />
+        <small class="muted">
+          Required for mobile money and bank transfer.
+        </small>
+      </label>
+
+      <label>Paid at
+        <input type="datetime-local" name="paid_at"
+               value="<%= values.paid_at || '' %>" />
+        <small class="muted">Leave blank to use the current time.</small>
+      </label>
+
+      <label>Notes
+        <textarea name="notes" maxlength="500"><%= values.notes || '' %></textarea>
+      </label>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Record Payment</button>
+        <a href="<%= basePath %>/payments" class="btn">Cancel</a>
+      </div>
+    </form>
+  </main>
+</body>
+</html>
