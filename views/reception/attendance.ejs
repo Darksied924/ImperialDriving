@@ -1,0 +1,73 @@
+<!-- views/reception/attendance.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title><%= title %> — Imperial Driving</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+  <link rel="stylesheet" href="/css/students.css" />
+  <link rel="stylesheet" href="/css/attendance.css" />
+</head>
+<body>
+  <%- include('../partials/topbar', { user: user, active: active }) %>
+
+  <main class="page">
+    <header class="page-header">
+      <h1>Theory Sessions</h1>
+      <div class="page-actions">
+        <a href="<%= basePath %>/attendance/new" class="btn btn-primary">+ New Session</a>
+      </div>
+    </header>
+
+    <form class="filters" method="get" action="<%= basePath %>/attendance">
+      <label>From
+        <input type="date" name="from" value="<%= filters.from %>" />
+      </label>
+      <label>To
+        <input type="date" name="to" value="<%= filters.to %>" />
+      </label>
+      <label>Status
+        <select name="status">
+          <option value="">All</option>
+          <% ['scheduled','in_progress','completed','cancelled'].forEach(function (s) { %>
+            <option value="<%= s %>" <%= filters.status === s ? 'selected' : '' %>><%= s %></option>
+          <% }); %>
+        </select>
+      </label>
+      <button class="btn" type="submit">Filter</button>
+    </form>
+
+    <% if (!sessions.length) { %>
+      <p class="empty">No sessions yet.</p>
+    <% } else { %>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>When</th>
+            <th>Topic</th>
+            <th>Instructor</th>
+            <th>Location</th>
+            <th>Status</th>
+            <th>Present / Marked</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% sessions.forEach(function (s) { %>
+            <tr>
+              <td><%= new Date(s.scheduled_at).toLocaleString() %></td>
+              <td><%= s.topic %></td>
+              <td><%= s.instructor_name || '—' %></td>
+              <td><%= s.location || '—' %></td>
+              <td><span class="pill pill-<%= s.status %>"><%= s.status %></span></td>
+              <td><%= s.present_count %> / <%= s.marked_count %></td>
+              <td><a class="btn btn-sm" href="<%= basePath %>/attendance/<%= s.id %>">Mark</a></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    <% } %>
+  </main>
+</body>
+</html>

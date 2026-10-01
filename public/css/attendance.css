@@ -1,0 +1,84 @@
+/* public/css/attendance.css — Theory attendance module (Phase 7) */
+
+/* Filter bar */
+.filters {
+  display: flex;
+  gap: 1rem;
+  align-items: end;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+.filters label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+}
+
+/* Stacked create-session form */
+.stack label {
+  display: block;
+  margin-bottom: 0.75rem;
+}
+.stack input,
+.stack select,
+.stack textarea {
+  display: block;
+  width: 100%;
+  padding: 0.4rem;
+  margin-top: 0.2rem;
+  box-sizing: border-box;
+}
+
+/* Roster table inputs */
+.roster select,
+.roster input[type="text"] {
+  width: 100%;
+  padding: 0.3rem;
+  box-sizing: border-box;
+}
+
+/* Pills — session status */
+.pill-scheduled   { background: #dbeafe; color: #1e40af; }
+.pill-in_progress { background: #fef3c7; color: #92400e; }
+.pill-completed   { background: #d1fae5; color: #065f46; }
+.pill-cancelled   { background: #fee2e2; color: #991b1b; }
+
+/* Pills — attendance status */
+.pill-present { background: #d1fae5; color: #065f46; }
+.pill-absent  { background: #fee2e2; color: #991b1b; }
+.pill-late    { background: #fef3c7; color: #92400e; }
+.pill-excused { background: #e0e7ff; color: #3730a3; }
+
+/* Flash + error banners */
+.flash {
+  background: #d1fae5;
+  color: #065f46;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+.errors {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 0.75rem 1.25rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  list-style-position: inside;
+}
+
+/* Session meta grid */
+.session-meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.25rem 1rem;
+  margin: 0;
+}
+.session-meta dt { font-weight: 600; color: #374151; }
+.session-meta dd { margin: 0; }
+
+/* Actions row */
+.actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.75rem;
+}

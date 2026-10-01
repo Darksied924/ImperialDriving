@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/css/admin.css" />
   <link rel="stylesheet" href="/css/students.css" />
   <link rel="stylesheet" href="/css/payments.css" />
+  <link rel="stylesheet" href="/css/attendance.css" />
 </head>
 <body>
   <%- include('../partials/topbar', { user: user, active: active }) %>
@@ -115,6 +116,46 @@
                        return y + '-' + m + '-' + day;
                      })(p.paid_at) %></td>
                 <td><a href="<%= basePath %>/payments/<%= p.id %>">View</a></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } %>
+    </section>
+
+    <section class="card">
+      <header class="card-header">
+        <h2>Theory attendance</h2>
+        <% if (attendance && attendance.length > 0) { %>
+          <a href="<%= basePath %>/attendance" class="btn">All sessions</a>
+        <% } %>
+      </header>
+
+      <% if (!attendance || !attendance.length) { %>
+        <p class="empty">No attendance recorded yet.</p>
+      <% } else { %>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Topic</th>
+              <th>Location</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% attendance.forEach(function (a) { %>
+              <tr>
+                <td><%= (function(d){
+                       const dt = new Date(d);
+                       const y = dt.getFullYear();
+                       const m = String(dt.getMonth() + 1).padStart(2, '0');
+                       const day = String(dt.getDate()).padStart(2, '0');
+                       return y + '-' + m + '-' + day;
+                     })(a.scheduled_at) %></td>
+                <td><%= a.topic %></td>
+                <td><%= a.location || '—' %></td>
+                <td><span class="pill pill-<%= a.status %>"><%= a.status %></span></td>
               </tr>
             <% }); %>
           </tbody>

@@ -1,0 +1,84 @@
+<!-- views/reception/attendance-mark.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title><%= title %> — Imperial Driving</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+  <link rel="stylesheet" href="/css/students.css" />
+  <link rel="stylesheet" href="/css/attendance.css" />
+</head>
+<body>
+  <%- include('../partials/topbar', { user: user, active: active }) %>
+
+  <main class="page">
+    <header class="page-header">
+      <h1><%= session.topic %></h1>
+      <div class="page-actions">
+        <a class="btn" href="<%= basePath %>/attendance">← All sessions</a>
+      </div>
+    </header>
+
+    <section class="card">
+      <dl class="session-meta">
+        <dt>When</dt>       <dd><%= new Date(session.scheduled_at).toLocaleString() %></dd>
+        <dt>Instructor</dt> <dd><%= session.instructor_name || '—' %></dd>
+        <dt>Location</dt>   <dd><%= session.location || '—' %></dd>
+        <dt>Duration</dt>   <dd><%= session.duration_minutes %> min</dd>
+        <dt>Status</dt>     <dd><span class="pill pill-<%= session.status %>"><%= session.status %></span></dd>
+        <% if (session.notes) { %>
+          <dt>Notes</dt>    <dd><%= session.notes %></dd>
+        <% } %>
+      </dl>
+    </section>
+
+    <% if (saved) { %>
+      <p class="flash">Attendance saved.</p>
+    <% } %>
+
+    <% if (!roster.length) { %>
+      <p class="empty">No active students to mark.</p>
+    <% } else { %>
+      <form method="post" action="<%= basePath %>/attendance/<%= session.id %>">
+        <table class="data-table roster">
+          <thead>
+            <tr>
+              <th>Adm #</th>
+              <th>Student</th>
+              <th>Course</th>
+              <th>Status</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% roster.forEach(function (r) { %>
+              <tr>
+                <td><%= r.admission_number %></td>
+                <td><%= r.first_name %> <%= r.last_name %></td>
+                <td><%= r.course_code || '—' %></td>
+                <td>
+                  <select name="status_<%= r.student_id %>">
+                    <% ['present','absent','late','excused'].forEach(function (s) { %>
+                      <option value="<%= s %>"
+                        <%= r.attendance_status === s ? 'selected' : '' %>><%= s %></option>
+                    <% }); %>
+                  </select>
+                </td>
+                <td>
+                  <input type="text" name="notes_<%= r.student_id %>"
+                         maxlength="200" value="<%= r.attendance_notes || '' %>" />
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+
+        <div class="actions">
+          <button class="btn btn-primary" type="submit">Save Attendance</button>
+        </div>
+      </form>
+    <% } %>
+  </main>
+</body>
+</html>

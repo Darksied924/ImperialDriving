@@ -1,0 +1,81 @@
+<!-- views/reception/attendance-form.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title><%= title %> — Imperial Driving</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+  <link rel="stylesheet" href="/css/students.css" />
+  <link rel="stylesheet" href="/css/attendance.css" />
+</head>
+<body>
+  <%- include('../partials/topbar', { user: user, active: active }) %>
+
+  <main class="page">
+    <header class="page-header">
+      <h1>New Theory Session</h1>
+      <div class="page-actions">
+        <a class="btn" href="<%= basePath %>/attendance">Back to list</a>
+      </div>
+    </header>
+
+    <% if (errors && errors.length) { %>
+      <ul class="errors">
+        <% errors.forEach(function (e) { %><li><%= e %></li><% }); %>
+      </ul>
+    <% } %>
+
+    <form method="post" action="<%= basePath %>/attendance" class="stack">
+      <label>Topic
+        <input type="text" name="topic" required maxlength="200"
+               value="<%= values.topic || '' %>" />
+      </label>
+
+      <label>Instructor
+        <select name="instructor_id">
+          <option value="">— none —</option>
+          <% instructors.forEach(function (i) { %>
+            <option value="<%= i.id %>" <%= values.instructor_id === i.id ? 'selected' : '' %>>
+              <%= i.full_name %>
+            </option>
+          <% }); %>
+        </select>
+      </label>
+
+      <label>Scheduled at
+        <input type="datetime-local" name="scheduled_at" required
+               value="<%= (values.scheduled_at || '').slice(0, 16) %>" />
+      </label>
+
+      <label>Duration (minutes)
+        <input type="number" name="duration_minutes" min="1"
+               value="<%= values.duration_minutes || 60 %>" />
+      </label>
+
+      <label>Location
+        <input type="text" name="location" maxlength="200"
+               value="<%= values.location || '' %>" />
+      </label>
+
+      <label>Status
+        <select name="status">
+          <% ['scheduled','in_progress','completed','cancelled'].forEach(function (s) { %>
+            <option value="<%= s %>"
+              <%= (values.status || 'scheduled') === s ? 'selected' : '' %>><%= s %></option>
+          <% }); %>
+        </select>
+      </label>
+
+      <label>Notes
+        <textarea name="notes" rows="3" maxlength="500"><%= values.notes || '' %></textarea>
+      </label>
+
+      <div class="actions">
+        <button class="btn btn-primary" type="submit">Create Session</button>
+        <a class="btn" href="<%= basePath %>/attendance">Cancel</a>
+      </div>
+    </form>
+  </main>
+</body>
+</html>

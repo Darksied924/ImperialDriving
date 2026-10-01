@@ -6,6 +6,7 @@ const { ensureAuthenticated, requireRole } = require('../middleware/auth');
 const { validateNewStudent } = require('../middleware/validation');
 const studentService = require('../services/student.service');
 const paymentService = require('../services/payment.service');
+const attendanceService = require('../services/attendance.service');
 
 // Roles allowed to view/create students
 const STAFF = ['reception', 'admin'];
@@ -139,9 +140,10 @@ router.get(
       const student = await studentService.getStudentById(req.params.id);
       if (!student) return res.status(404).send('Student not found');
 
-      const [balance, payments] = await Promise.all([
+      const [balance, payments, attendance] = await Promise.all([
         paymentService.getStudentBalance(student.id),
         paymentService.listPaymentsForStudent(student.id),
+        attendanceService.getStudentAttendance(student.id, { limit: 20 }),
       ]);
 
       res.render('reception/student-details', {
@@ -150,6 +152,7 @@ router.get(
         student,
         balance,
         payments,
+        attendance,
         active: 'students',
         basePath: req.baseUrl,
       });

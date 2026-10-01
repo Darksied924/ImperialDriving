@@ -291,10 +291,77 @@ function validateNewPayment(body) {
   return errors;
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Theory sessions (create) — Phase 7
+// ─────────────────────────────────────────────────────────────────────────────
+//
+// Field names mirror theory_sessions and the form posts snake_case.
+// Enum whitelist reflects the LIVE enum (verified via psql):
+//   session_status = scheduled | in_progress | completed | cancelled
+
+const SESSION_STATUSES = ['scheduled', 'in_progress', 'completed', 'cancelled'];
+
+function validateNewSession(body) {
+  const errors = [];
+  const b = body || {};
+
+  // Topic
+  const topic = (b.topic || '').trim();
+  if (!topic) {
+    errors.push('Topic is required.');
+  } else if (topic.length > 200) {
+    errors.push('Topic must be 200 characters or fewer.');
+  }
+
+  // Instructor (optional)
+  const instructorId = (b.instructor_id || '').trim();
+  if (instructorId && !UUID_RE.test(instructorId)) {
+    errors.push('Instructor selection is invalid.');
+  }
+
+  // Scheduled at (required)
+  const scheduledRaw = (b.scheduled_at || '').trim();
+  if (!scheduledRaw) {
+    errors.push('Scheduled date/time is required.');
+  } else if (Number.isNaN(Date.parse(scheduledRaw))) {
+    errors.push('Scheduled date/time is not valid.');
+  }
+
+  // Duration (positive integer)
+  const durRaw = (b.duration_minutes == null ? '' : String(b.duration_minutes)).trim();
+  if (durRaw === '') {
+    // Blank → treat as invalid; the form supplies a default of 60.
+    errors.push('Duration (minutes) is required.');
+  } else if (!/^\d+$/.test(durRaw) || Number(durRaw) <= 0) {
+    errors.push('Duration must be a positive whole number.');
+  }
+
+  // Location (optional)
+  const location = (b.location || '').trim();
+  if (location.length > 200) {
+    errors.push('Location must be 200 characters or fewer.');
+  }
+
+  // Status (optional — DB default 'scheduled')
+  const status = (b.status || '').trim();
+  if (status && !SESSION_STATUSES.includes(status)) {
+    errors.push('Session status is not valid.');
+  }
+
+  // Notes (optional)
+  const notes = (b.notes || '').trim();
+  if (notes.length > 500) {
+    errors.push('Notes must be 500 characters or fewer.');
+  }
+
+  return errors;
+}
+
 module.exports = {
   validateNewUser,
   validateNewStudent,
   validateNewCourse,
   validateCourseUpdate,
   validateNewPayment,
+  validateNewSession,
 };

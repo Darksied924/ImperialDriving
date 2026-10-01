@@ -16,6 +16,7 @@ const adminRoutes = require('./src/routes/admin.routes');
 const studentsRoutes = require('./src/routes/students.routes');
 const coursesRoutes = require('./src/routes/courses.routes');   // NEW
 const paymentsRoutes = require('./src/routes/payments.routes'); // NEW
+const attendanceRoutes = require('./src/routes/attendance.routes'); // NEW (Phase 7)
 
 const { ensureAuthenticated, requireRole } = require('./src/middleware/auth');
 
@@ -53,21 +54,32 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Expose the current user to every view.
-// Expose the current user to every view.
 app.use((req, res, next) => {
   res.locals.user = req.user || null;
   res.locals.currentPath = req.path;
-  res.locals.currentUrl  = req.originalUrl;   // if any partial ever needs query string
-  res.locals.query       = req.query;         // if views need ?inactive=1 etc.
+  res.locals.currentUrl  = req.originalUrl;
+  res.locals.query       = req.query;
   next();
 });
 
 // Routes
 app.use('/', healthRoutes);
 app.use('/auth', authRoutes);
+
+// ── Sub-router mounts under /reception and /admin ────────────────────────
+// Order matters: sub-routers must be mounted BEFORE the parent admin router
+// so the admin router's auth middleware does not intercept these paths first.
 app.use('/admin/courses', coursesRoutes); // NEW — must precede /admin
-app.use('/reception', paymentsRoutes);   // NEW — /reception/payments/*
-app.use('/admin', paymentsRoutes);       // NEW — /admin/payments/*, must precede adminRoutes
+
+// Theory attendance — Phase 7.
+// Same router serves /reception/attendance/* and /admin/attendance/*.
+app.use('/reception', attendanceRoutes); // NEW
+app.use('/admin',     attendanceRoutes); // NEW — must precede /admin adminRoutes
+
+// Payments — Phase 6. /reception/payments/* and /admin/payments/*.
+app.use('/reception', paymentsRoutes);   // NEW
+app.use('/admin', paymentsRoutes);       // NEW — must precede adminRoutes
+
 app.use('/admin', adminRoutes);
 
 // Students — mounted under both staff areas. The same router serves
@@ -75,9 +87,6 @@ app.use('/admin', adminRoutes);
 // router allow reception + admin only.
 app.use('/reception', studentsRoutes);
 app.use('/admin', studentsRoutes);
-
-// Courses — admin-only. Mounted at an explicit subpath so it sits alongside
-// the admin routes without touching them.
 
 // Placeholder dashboards — replace with real routers later.
 function placeholderDashboard(label) {
