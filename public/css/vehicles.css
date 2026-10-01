@@ -1,0 +1,66 @@
+/* public/css/vehicles.css — Vehicles admin module (Phase 8) */
+
+/* Table tweaks */
+.vehicles-table td { vertical-align: middle; }
+.vehicles-table code {
+  background: #f3f4f6;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+/* Row actions: small buttons inline */
+.row-actions { white-space: nowrap; }
+.row-actions form { display: inline-block; margin-left: 0.25rem; }
+
+/* Deleted-row visual: dim + strikethrough on registration */
+.row-deleted { opacity: 0.55; }
+.row-deleted code { text-decoration: line-through; }
+
+/* Status pills */
+.pill-available      { background: #d1fae5; color: #065f46; }
+.pill-in_use         { background: #dbeafe; color: #1e40af; }
+.pill-maintenance    { background: #fef3c7; color: #92400e; }
+.pill-out_of_service { background: #fee2e2; color: #991b1b; }
+.pill-deleted        { background: #e5e7eb; color: #374151; }
+
+/* Buttons */
+.btn-danger {
+  background: #dc2626;
+  color: #fff;
+  border: 0;
+}
+.btn-danger:hover { background: #b91c1c; }
+.btn-sm { padding: 0.25rem 0.6rem; font-size: 0.8rem; }
+
+/* Stacked form (create/edit) */
+.stack label {
+  display: block;
+  margin-bottom: 0.75rem;
+}
+.stack input,
+.stack select,
+.stack textarea {
+  display: block;
+  width: 100%;
+  padding: 0.4rem;
+  margin-top: 0.2rem;
+  box-sizing: border-box;
+}
+
+/* Error banner */
+.errors {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 0.75rem 1.25rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  list-style-position: inside;
+}
+
+/* Actions row */
+.actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.75rem;
+}

@@ -330,7 +330,6 @@ function validateNewSession(body) {
   // Duration (positive integer)
   const durRaw = (b.duration_minutes == null ? '' : String(b.duration_minutes)).trim();
   if (durRaw === '') {
-    // Blank → treat as invalid; the form supplies a default of 60.
     errors.push('Duration (minutes) is required.');
   } else if (!/^\d+$/.test(durRaw) || Number(durRaw) <= 0) {
     errors.push('Duration must be a positive whole number.');
@@ -357,6 +356,76 @@ function validateNewSession(body) {
   return errors;
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Vehicles (create + edit) — Phase 8
+// ─────────────────────────────────────────────────────────────────────────────
+//
+// Field names mirror the vehicles schema (migration 005) and the form posts
+// snake_case. Enums reflect the LIVE DB:
+//   vehicle_status    = available | in_use | maintenance | out_of_service
+//   transmission_type = manual    | automatic
+// `year` has CHECK 1950..2100 in the DB; validated again here.
+// `registration_number` is UNIQUE — a duplicate surfaces as 23505 and is
+// handled by the route layer.
+
+const VEHICLE_STATUSES   = ['available', 'in_use', 'maintenance', 'out_of_service'];
+const TRANSMISSION_TYPES = ['manual', 'automatic'];
+
+// Plates are alphanumeric with optional spaces / hyphens (e.g. "KDA 123A").
+const REGISTRATION_RE = /^[A-Za-z0-9][A-Za-z0-9 -]{0,19}$/;
+
+function validateNewVehicle(body) {
+  const errors = [];
+  const b = body || {};
+
+  const reg = (b.registration_number || '').trim();
+  if (!reg) {
+    errors.push('Registration number is required.');
+  } else if (!REGISTRATION_RE.test(reg)) {
+    errors.push('Registration number must be 1–20 characters: letters, digits, spaces, or hyphens.');
+  }
+
+  const make = (b.make || '').trim();
+  if (make.length > 100) errors.push('Make must be 100 characters or fewer.');
+
+  const model = (b.model || '').trim();
+  if (model.length > 100) errors.push('Model must be 100 characters or fewer.');
+
+  const yearRaw = (b.year == null ? '' : String(b.year)).trim();
+  if (yearRaw !== '') {
+    if (!/^\d{4}$/.test(yearRaw)) {
+      errors.push('Year must be a 4-digit number.');
+    } else {
+      const y = Number(yearRaw);
+      if (y < 1950 || y > 2100) {
+        errors.push('Year must be between 1950 and 2100.');
+      }
+    }
+  }
+
+  const color = (b.color || '').trim();
+  if (color.length > 50) errors.push('Color must be 50 characters or fewer.');
+
+  const trans = (b.transmission || '').trim();
+  if (trans && !TRANSMISSION_TYPES.includes(trans)) {
+    errors.push('Transmission must be manual or automatic.');
+  }
+
+  const status = (b.status || '').trim();
+  if (status && !VEHICLE_STATUSES.includes(status)) {
+    errors.push('Vehicle status is not valid.');
+  }
+
+  const notes = (b.notes || '').trim();
+  if (notes.length > 500) errors.push('Notes must be 500 characters or fewer.');
+
+  return errors;
+}
+
+function validateVehicleUpdate(body) {
+  return validateNewVehicle(body);
+}
+
 module.exports = {
   validateNewUser,
   validateNewStudent,
@@ -364,4 +433,6 @@ module.exports = {
   validateCourseUpdate,
   validateNewPayment,
   validateNewSession,
+  validateNewVehicle,
+  validateVehicleUpdate,
 };

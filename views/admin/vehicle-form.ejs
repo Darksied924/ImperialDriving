@@ -1,0 +1,87 @@
+<!-- views/admin/vehicle-form.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title><%= title %> — Imperial Driving</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+  <link rel="stylesheet" href="/css/vehicles.css" />
+</head>
+<body>
+  <%- include('../partials/topbar', { user: user, active: active }) %>
+
+  <main class="page">
+    <header class="page-header">
+      <h1><%= mode === 'create' ? 'New Vehicle' : 'Edit Vehicle' %></h1>
+      <div class="page-actions">
+        <a class="btn" href="<%= basePath %>">Back to list</a>
+      </div>
+    </header>
+
+    <% if (errors && errors.length) { %>
+      <ul class="errors">
+        <% errors.forEach(function (e) { %><li><%= e %></li><% }); %>
+      </ul>
+    <% } %>
+
+    <form method="post"
+          action="<%= mode === 'create' ? basePath : basePath + '/' + vehicle.id %>"
+          class="stack">
+
+      <label>Registration number
+        <input type="text" name="registration_number" required maxlength="20"
+               value="<%= vehicle.registration_number || '' %>" />
+      </label>
+
+      <label>Make
+        <input type="text" name="make" maxlength="100"
+               value="<%= vehicle.make || '' %>" />
+      </label>
+
+      <label>Model
+        <input type="text" name="model" maxlength="100"
+               value="<%= vehicle.model || '' %>" />
+      </label>
+
+      <label>Year
+        <input type="number" name="year" min="1950" max="2100"
+               value="<%= vehicle.year || '' %>" />
+      </label>
+
+      <label>Color
+        <input type="text" name="color" maxlength="50"
+               value="<%= vehicle.color || '' %>" />
+      </label>
+
+      <label>Transmission
+        <select name="transmission">
+          <option value="">— unspecified —</option>
+          <option value="manual"    <%= vehicle.transmission === 'manual'    ? 'selected' : '' %>>manual</option>
+          <option value="automatic" <%= vehicle.transmission === 'automatic' ? 'selected' : '' %>>automatic</option>
+        </select>
+      </label>
+
+      <label>Status
+        <select name="status">
+          <% ['available','in_use','maintenance','out_of_service'].forEach(function (s) { %>
+            <option value="<%= s %>"
+              <%= (vehicle.status || 'available') === s ? 'selected' : '' %>><%= s %></option>
+          <% }); %>
+        </select>
+      </label>
+
+      <label>Notes
+        <textarea name="notes" rows="3" maxlength="500"><%= vehicle.notes || '' %></textarea>
+      </label>
+
+      <div class="actions">
+        <button class="btn btn-primary" type="submit">
+          <%= mode === 'create' ? 'Create Vehicle' : 'Save Changes' %>
+        </button>
+        <a class="btn" href="<%= basePath %>">Cancel</a>
+      </div>
+    </form>
+  </main>
+</body>
+</html>

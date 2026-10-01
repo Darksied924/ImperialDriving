@@ -1,0 +1,79 @@
+<!-- views/admin/vehicles.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title><%= title %> — Imperial Driving</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+  <link rel="stylesheet" href="/css/vehicles.css" />
+</head>
+<body>
+  <%- include('../partials/topbar', { user: user, active: active }) %>
+
+  <main class="page">
+    <header class="page-header">
+      <h1>Vehicles</h1>
+      <div class="page-actions">
+        <a href="<%= basePath %>/new" class="btn btn-primary">+ New Vehicle</a>
+        <% if (showDeleted) { %>
+          <a href="<%= basePath %>" class="btn">Hide deleted</a>
+        <% } else { %>
+          <a href="<%= basePath %>?deleted=1" class="btn">Show deleted</a>
+        <% } %>
+      </div>
+    </header>
+
+    <% if (!vehicles.length) { %>
+      <p class="empty">
+        <%= showDeleted ? 'No vehicles.' : 'No active vehicles yet.' %>
+      </p>
+    <% } else { %>
+      <table class="data-table vehicles-table">
+        <thead>
+          <tr>
+            <th>Reg. #</th>
+            <th>Make / Model</th>
+            <th>Year</th>
+            <th>Color</th>
+            <th>Transmission</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% vehicles.forEach(function (v) { %>
+            <tr class="<%= v.deleted_at ? 'row-deleted' : '' %>">
+              <td><code><%= v.registration_number %></code></td>
+              <td>
+                <%= (v.make || '—') %>
+                <%= v.model ? '/ ' + v.model : '' %>
+              </td>
+              <td><%= v.year || '—' %></td>
+              <td><%= v.color || '—' %></td>
+              <td><%= v.transmission || '—' %></td>
+              <td>
+                <span class="pill pill-<%= v.status %>"><%= v.status %></span>
+              </td>
+              <td class="row-actions">
+                <% if (v.deleted_at) { %>
+                  <span class="pill pill-deleted">deleted</span>
+                  <form method="post" action="<%= basePath %>/<%= v.id %>/reactivate" style="display:inline;">
+                    <button class="btn btn-sm" type="submit">Reactivate</button>
+                  </form>
+                <% } else { %>
+                  <a class="btn btn-sm" href="<%= basePath %>/<%= v.id %>/edit">Edit</a>
+                  <form method="post" action="<%= basePath %>/<%= v.id %>/delete" style="display:inline;"
+                        onsubmit="return confirm('Delete this vehicle? It can be reactivated later.');">
+                    <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                  </form>
+                <% } %>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    <% } %>
+  </main>
+</body>
+</html>

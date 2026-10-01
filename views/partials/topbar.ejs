@@ -58,6 +58,10 @@
              class="topbar-link<%= isActive('/admin/courses') ? ' is-active' : '' %>">
             Courses
           </a>
+          <a href="/admin/vehicles"
+             class="topbar-link<%= isActive('/admin/vehicles') ? ' is-active' : '' %>">
+            Vehicles
+          </a>
         <% } else if (role === 'reception') { %>
           <a href="/reception/dashboard"
              class="topbar-link<%= isActive('/reception/dashboard') ? ' is-active' : '' %>">

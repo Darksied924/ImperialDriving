@@ -17,6 +17,7 @@ const studentsRoutes = require('./src/routes/students.routes');
 const coursesRoutes = require('./src/routes/courses.routes');   // NEW
 const paymentsRoutes = require('./src/routes/payments.routes'); // NEW
 const attendanceRoutes = require('./src/routes/attendance.routes'); // NEW (Phase 7)
+const vehiclesRoutes = require('./src/routes/vehicles.routes');     // NEW (Phase 8)
 
 const { ensureAuthenticated, requireRole } = require('./src/middleware/auth');
 
@@ -69,22 +70,23 @@ app.use('/auth', authRoutes);
 // ── Sub-router mounts under /reception and /admin ────────────────────────
 // Order matters: sub-routers must be mounted BEFORE the parent admin router
 // so the admin router's auth middleware does not intercept these paths first.
-app.use('/admin/courses', coursesRoutes); // NEW — must precede /admin
 
-// Theory attendance — Phase 7.
-// Same router serves /reception/attendance/* and /admin/attendance/*.
-app.use('/reception', attendanceRoutes); // NEW
-app.use('/admin',     attendanceRoutes); // NEW — must precede /admin adminRoutes
+// Admin-only sub-routers (explicit sub-paths).
+app.use('/admin/courses',  coursesRoutes);   // must precede /admin
+app.use('/admin/vehicles', vehiclesRoutes);  // NEW (Phase 8) — must precede /admin
 
-// Payments — Phase 6. /reception/payments/* and /admin/payments/*.
-app.use('/reception', paymentsRoutes);   // NEW
-app.use('/admin', paymentsRoutes);       // NEW — must precede adminRoutes
+// Theory attendance — Phase 7. Same router serves /reception and /admin.
+app.use('/reception', attendanceRoutes);
+app.use('/admin',     attendanceRoutes); // must precede adminRoutes
+
+// Payments — Phase 6. Same router serves /reception and /admin.
+app.use('/reception', paymentsRoutes);
+app.use('/admin',     paymentsRoutes); // must precede adminRoutes
 
 app.use('/admin', adminRoutes);
 
 // Students — mounted under both staff areas. The same router serves
-// /reception/students/* and /admin/students/*. Role guards inside the
-// router allow reception + admin only.
+// /reception/students/* and /admin/students/*.
 app.use('/reception', studentsRoutes);
 app.use('/admin', studentsRoutes);
 
